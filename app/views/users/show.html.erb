@@ -1,0 +1,41 @@
+<%= @user.email %>
+<%= current_user.id %>
+<% if current_user.id == params[:id].to_i %>
+    <div>    
+        <%= "The following users have sent you friend requests:" %>
+        <% current_user.received_requests.where("accept = ?", false).each do |r| %>
+            <div>
+                <%= User.find(r.sender_id).email %>
+                <%= link_to "Accept friend request", friend_request_url(:id => FriendRequest.where("sender_id = ? AND recipient_id = ?", r.sender_id, current_user.id).ids), method: :patch %>
+                <%= link_to "Reject friend request", friend_request_url(:id => FriendRequest.where("sender_id = ? AND recipient_id = ?", r.sender_id, current_user.id).ids), method: :delete %>
+            </div>
+        <% end %>
+    </div>
+<% elsif FriendRequest.where("sender_id = ? AND recipient_id = ? AND accept = ?", params[:id], current_user.id, false).any? %>
+    <%= link_to "Delete friend request", friend_request_url(:id => @request.ids), method: :delete %>
+<% elsif FriendRequest.where("sender_id = ? AND recipient_id = ? AND accept = ?", current_user.id, params[:id], false).any? %>
+    <%= link_to "Delete friend request", friend_request_url(:id => @request.ids), method: :delete %>
+<% elsif (FriendRequest.where("sender_id = ? AND recipient_id = ? AND accept = ?", current_user.id, params[:id], true)).any? %>
+    <%= link_to "Unfriend", friend_request_url(:id => @request.ids), method: :delete %>
+<% elsif (FriendRequest.where("sender_id = ? AND recipient_id = ? AND accept = ?", params[:id], current_user.id, true)).any? %>
+    <%= link_to "Unfriend", friend_request_url(:id => @request.ids), method: :delete %>
+<% else %>
+    <%= link_to "Send friend request", friend_requests_url(:id => @user.id), method: :post %>
+<% end %>
+<div>
+    <% if current_user.id == params[:id].to_i %>
+        <%= "You are friends with:" %>
+        <% current_user.received_requests.where("accept = ?", true).each do |r| %>
+                <div>
+                    <%= User.find(r.sender_id).email %>
+                    <%= link_to "Unfriend", friend_request_url(:id => FriendRequest.where("sender_id = ? AND recipient_id = ?", r.sender_id, current_user.id).ids), method: :delete %>
+                </div>
+            <% end %>
+        <% current_user.sent_requests.where("accept = ?", true).each do |r| %>
+                <div>
+                    <%= User.find(r.recipient_id).email %>
+                    <%= link_to "Unfriend", friend_request_url(:id => FriendRequest.where("sender_id = ? AND recipient_id = ?", current_user.id, r.recipient_id).ids), method: :delete %>
+                </div>
+            <% end %>
+    <% end %>
+</div>

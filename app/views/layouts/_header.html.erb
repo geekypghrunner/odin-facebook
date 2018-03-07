@@ -1,0 +1,6 @@
+<% if current_user.nil? %>
+<% else %>
+    <%= link_to "Users", users_path %>
+    <%= "You are logged in as: #{current_user.email}" %> 
+    <%= link_to "Logout", logout_path, method: :delete %>
+<% end %>
