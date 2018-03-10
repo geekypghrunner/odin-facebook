@@ -1,6 +1,29 @@
 <%= @user.email %>
 <%= current_user.id %>
-<% if current_user.id == params[:id].to_i %>
+<div>
+    Create a new post:
+        <%= form_for @post do |f| %>
+            <%= f.hidden_field :user_id, :value => params[:id] %>
+            <%= f.hidden_field :author_id, :value => current_user.id %>
+            <%= f.text_field :content %>
+            <%= f.submit %>
+        <% end %>
+</div>
+<div>
+    Posts:
+    <% @posts.each do |p| %>
+        <div>
+            <%= User.find(p.author_id).email %>
+            <%= p.content %>
+            <% if Like.where("post_id = ? AND user_id = ?", p.id, current_user.id).any? %>
+                <%= link_to "Unlike", like_url(:id => Like.where("post_id = ? AND user_id = ?", p.id, current_user.id).ids), method: :delete %>
+            <% else %>
+                <%= link_to "Like Post", likes_url(:post => p.id, :user => current_user), method: :post %>
+            <% end %>
+        </div>
+    <% end %>
+</div>
+<% if current_user.id == params[:id].to_i %>    
     <div>    
         <%= "The following users have sent you friend requests:" %>
         <% current_user.received_requests.where("accept = ?", false).each do |r| %>

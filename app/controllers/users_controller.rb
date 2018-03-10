@@ -11,6 +11,9 @@ class UsersController < ApplicationController
         elsif FriendRequest.where("sender_id = ? AND recipient_id = ?", current_user.id, params[:id]).any?
             @request = FriendRequest.where("sender_id = ? AND recipient_id = ?", current_user.id, params[:id])
         end
+        @post = Post.new
+        @posts = @user.posts
+        @like = Like.new
     end
     
     
