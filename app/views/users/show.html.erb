@@ -1,3 +1,4 @@
+<%= link_to gravatar_for(@user, size: 50), @user %>
 <%= @user.email %>
 <%= current_user.id %>
 <div>
@@ -15,6 +16,16 @@
         <div>
             <%= User.find(p.author_id).email %>
             <%= p.content %>
+            <%= p.likes.count %>
+            <% p.comments.each do |c| %>
+                <%= c.content %>
+            <% end %>
+            <%= form_for @comment do |f| %>
+                <%= f.hidden_field :post_id, :value => p.id %>
+                <%= f.hidden_field :user_id, :value => current_user.id %>
+                <%= f.text_field :content %>
+                <%= f.submit %>
+            <% end %>
             <% if Like.where("post_id = ? AND user_id = ?", p.id, current_user.id).any? %>
                 <%= link_to "Unlike", like_url(:id => Like.where("post_id = ? AND user_id = ?", p.id, current_user.id).ids), method: :delete %>
             <% else %>
@@ -34,6 +45,9 @@
             </div>
         <% end %>
     </div>
+<% elsif FriendRequest.where("sender_id = ? AND recipient_id = ? AND accept = ?", params[:id], current_user.id, false).any? %>
+    <%= link_to "Accept friend request", friend_request_url(:id => FriendRequest.where("sender_id = ? AND recipient_id = ?", params[:id], current_user.id).ids), method: :patch %>
+    <%= link_to "Reject friend request", friend_request_url(:id => FriendRequest.where("sender_id = ? AND recipient_id = ?", params[:id], current_user.id).ids), method: :delete %>
 <% elsif FriendRequest.where("sender_id = ? AND recipient_id = ? AND accept = ?", params[:id], current_user.id, false).any? %>
     <%= link_to "Delete friend request", friend_request_url(:id => @request.ids), method: :delete %>
 <% elsif FriendRequest.where("sender_id = ? AND recipient_id = ? AND accept = ?", current_user.id, params[:id], false).any? %>

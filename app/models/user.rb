@@ -5,6 +5,7 @@ class User < ApplicationRecord
                                    foreign_key: "recipient_id"
   has_many :posts
   has_many :likes
+  has_many :comments
 
 #  has_many :friends
   # Include default devise modules. Others available are:

@@ -1,0 +1,11 @@
+Friend Count:
+<%= @friends.count %>
+<% @friend_list_time.each do |t| %>
+  <% Post.where(created_at: t).each do |p| %>
+      <div>
+          <%= User.find(p.author_id).email %>
+          <%= p.content %>
+          <%= t %>
+      </div>
+  <% end %>
+<% end %>

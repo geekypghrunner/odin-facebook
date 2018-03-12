@@ -1,0 +1,16 @@
+<% @users.each do |u| %>
+    <% if current_user.received_requests.where("sender_id = ? AND accept = ?", u.id, false).any? %>
+            <%= link_to "Accept friend request", friend_request_url(:id => FriendRequest.where("sender_id = ? AND recipient_id = ?", u.id, current_user.id).ids), method: :patch %>
+            <%= link_to "Reject friend request", friend_request_url(:id => FriendRequest.where("sender_id = ? AND recipient_id = ?", u.id, current_user.id).ids), method: :delete %>
+    <% elsif FriendRequest.where("sender_id = ? AND recipient_id = ? AND accept = ?", u.id, current_user.id, false).any? %>
+        <%= link_to "Delete friend request", friend_request_url(:id => @request.ids), method: :delete %>
+    <% elsif FriendRequest.where("sender_id = ? AND recipient_id = ? AND accept = ?", current_user.id, u.id, false).any? %>
+        <%= link_to "Delete friend request", friend_request_url(:id => @request.ids), method: :delete %>
+    <% elsif (FriendRequest.where("sender_id = ? AND recipient_id = ? AND accept = ?", current_user.id, u.id, true)).any? %>
+        <%= link_to "Unfriend", friend_request_url(:id => @request.ids), method: :delete %>
+    <% elsif (FriendRequest.where("sender_id = ? AND recipient_id = ? AND accept = ?", u.id, current_user.id, true)).any? %>
+        <%= link_to "Unfriend", friend_request_url(:id => @request.ids), method: :delete %>
+    <% else %>
+        <%= link_to "Send friend request", friend_requests_url(:id => @user.id), method: :post %>
+    <% end %>
+<% end %>
