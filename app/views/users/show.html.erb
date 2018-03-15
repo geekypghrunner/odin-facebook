@@ -1,24 +1,28 @@
 <%= link_to gravatar_for(@user, size: 50), @user %>
 <%= @user.email %>
-<%= current_user.id %>
 <div>
     Create a new post:
         <%= form_for @post do |f| %>
             <%= f.hidden_field :user_id, :value => params[:id] %>
             <%= f.hidden_field :author_id, :value => current_user.id %>
-            <%= f.text_field :content %>
+            <%= f.text_field :content, placeholder: "Enter content" %>
+            <%= f.url_field :picture, placeholder: "Enter URL" %>
             <%= f.submit %>
         <% end %>
 </div>
-<div>
+<div class="post_container">
     Posts:
     <% @posts.each do |p| %>
-        <div>
-            <%= User.find(p.author_id).email %>
-            <%= p.content %>
-            <%= p.likes.count %>
+        <div class="post">
+            <div><%= User.find(p.author_id).email %></div>
+            <div><%= p.content %></div>
+            <%= image_tag p.picture if p.picture? %>
+            <% if p.author_id == current_user.id %>
+                <div><%= link_to "Delete post", post_url(:id => p.id), method: :delete %></div>
+            <% end %>
+            <div>Like count: <%= p.likes.count %></div>
             <% p.comments.each do |c| %>
-                <%= c.content %>
+                <div><%= c.content %></div>
             <% end %>
             <%= form_for @comment do |f| %>
                 <%= f.hidden_field :post_id, :value => p.id %>

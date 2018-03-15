@@ -1,7 +1,7 @@
 class PostsController < ApplicationController
     
     def create
-        @post = Post.create(:user_id => params[:post][:user_id], :author_id => params[:post][:author_id], :content => params[:post][:content])
+        @post = Post.create(:user_id => params[:post][:user_id], :author_id => params[:post][:author_id], :content => params[:post][:content], :picture => params[:post][:picture])
         redirect_back fallback_location: { action: "show", id: params[:id] }
     end
     
@@ -22,4 +22,9 @@ class PostsController < ApplicationController
         
     end
     
+    
+    def destroy
+        Post.find(params[:id]).destroy
+        redirect_back fallback_location: { action: "show", id: params[:id] }
+    end
 end

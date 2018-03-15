@@ -1,7 +1,7 @@
 <% if current_user.nil? %>
 <% else %>
-    <%= link_to "Users", users_path %>
-    <%= link_to "Index", posts_path %>
-    <%= "You are logged in as: #{current_user.email}" %> 
-    <%= link_to "Logout", logout_path, method: :delete %>
+    <span class="left-bar"><%= link_to "Users", users_path %></span>
+    <spanclass="left-bar"><%= link_to "Index", posts_path %></span>
+    <span class="right-bar"><%= link_to "Logout", logout_path, method: :delete %></span>
+    <span class="right-bar"><%= "You are logged in as: #{current_user.email}" %></span> 
 <% end %>
